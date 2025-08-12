@@ -27,5 +27,5 @@ Fonctionne **offline** et peut être installée comme application **PWA**.
 
 ### 1. Cloner le repo
 ```bash
-git clone https://github.com/<TON-UTILISATEUR>/<TON-REPO>.git
+git clone https://github.com/dexteee-r/AchatLIST-WebAPP.git
 cd <TON-REPO>
