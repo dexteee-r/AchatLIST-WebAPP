@@ -1,4 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react';
+import { savePurchasesToJSON } from './utils/storages';
+
 
 // --- Priorités (affichage badges) ---
 const PRIORITIES = [
@@ -69,7 +71,7 @@ export default function App() {
   }, [items])
 
   // Liste filtrée/triée
-  const filtered = useMemo(() => {
+  const filteredItems = useMemo(() => {
     let out = [...items]
     const q = filters.q.trim().toLowerCase()
     if (q) {
@@ -277,10 +279,12 @@ export default function App() {
             </div>
 
             <div className="field">
+              
               <div className="label" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span>Attributs personnalisés</span>
                 <button type="button" className="btn" onClick={addAttr}>+ Ajouter</button>
               </div>
+
               <div className="grid" style={{ gap: 8 }}>
                 {(draft.attributes || []).map((a, idx) => (
                   <div key={idx} className="grid-12" style={{ gap: 8 }}>
@@ -290,14 +294,18 @@ export default function App() {
                   </div>
                 ))}
               </div>
+
             </div>
 
             <div style={{ display: 'flex', gap: 10 }}>
               <button className="btn primary" type="submit">{editingId ? 'Enregistrer' : 'Ajouter'}</button>
               <button type="button" className="btn" onClick={() => { setDraft(emptyItem()); setEditingId(null) }}>Réinitialiser</button>
             </div>
+
           </form>
         </section>
+
+        <button type="button" className="btn" onClick={() => savePurchasesToJSON(items)}>  Sauvegarder la liste (load a JSON) </button>
 
         {/* Résumé Budget */}
         <section className="panel" style={{ marginTop: 16, display: 'flex', justifyContent: 'space-between' }}>
@@ -354,13 +362,13 @@ export default function App() {
 
         {/* Liste */}
         <section style={{ marginTop: 16 }}>
-          {filtered.length === 0 ? (
+          {filteredItems.length === 0 ? (
             <div className="panel" style={{ textAlign: 'center', color: 'var(--muted)', padding: '28px' }}>
               Aucun élément. Ajoute ton premier achat au-dessus 👆
             </div>
           ) : (
             <ul className="list">
-              {filtered.map(it => (
+              {filteredItems.map(it => (
                 <li key={it.id} className={`card ${it.purchased ? 'opacity-70' : ''}`}>
                   {/* Image produit (si trouvée) */}
                   {it.imageUrl && (

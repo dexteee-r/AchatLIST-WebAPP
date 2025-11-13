@@ -9,7 +9,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'robots.txt', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Liste d’achats – MVP',
+        name: 'Liste_achats_MVP',
         short_name: 'Achats',
         description: 'Ta liste d’achats avec priorités, offline et installable.',
         theme_color: '#0f172a',
@@ -27,7 +27,7 @@ export default defineConfig({
         // Cache-first pour les assets statiques buildés
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         // Network-first pour la page (utile si tu changes souvent)
-        navigateFallback: '/index.html'
+        navigateFallback: 'index.html'
       }
     })
   ]

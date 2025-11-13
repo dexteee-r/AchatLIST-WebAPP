@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# files to ignore 
+note_a_moi_meme.md
+.env
+achats.json
+
