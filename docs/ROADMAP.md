@@ -54,6 +54,11 @@ Cette roadmap détaille les fonctionnalités futures prévues pour l'application
 - `src/components/ItemForm.jsx` - Loading states pour fetch image
 - `src/utils/helpers.js` - Toast dans importJSON
 
+**Feature réalisé**
+
+- [ ] oui 
+- [x] non pas encore
+
 ---
 
 ### ⚡ P1 - Export JSON avec Date dans le Nom
@@ -87,6 +92,11 @@ export function savePurchasesToJSON(purchases) {
 - `liste_achats_2025-11-21.json`
 - etc.
 
+**Feature réalisé**
+
+
+- [x] oui (le 20/11/25)
+- [ ] non
 ---
 
 ### ⚡ P1 - Améliorer la Récupération d'Images
@@ -159,6 +169,11 @@ Essayer plusieurs APIs si Microlink échoue :
 2. OpenGraph.io
 3. LinkPreview
 4. Extraction manuelle via fetch + DOMParser
+
+**Feature réalisé**
+
+- [ ] oui 
+- [x] non pas encore
 
 ---
 
@@ -238,6 +253,11 @@ export default function TagInput({ tags, onChange }) {
 
 5. **Afficher tags dans ItemCard**
 
+**Feature réalisé**
+
+- [ ] oui 
+- [x] non pas encore
+
 ---
 
 ### 📌 P2 - Web Scraping Amélioré
@@ -289,6 +309,11 @@ function extractPrice(text) {
 - Besoin d'un backend pour contourner CORS
 - Considérer scraping server-side
 
+
+**Feature réalisé**
+
+- [ ] oui 
+- [x] non pas encore
 ---
 
 ### 💡 P3 - Tutoriel pour Nouveaux Utilisateurs
@@ -357,6 +382,11 @@ export default function Tutorial() {
 ```
 
 3. Ajouter dans App.jsx
+
+**Feature réalisé**
+
+- [ ] oui 
+- [x] non pas encore
 
 ---
 
@@ -429,6 +459,10 @@ function migrateV1toV2() {
   }
 }
 ```
+**Feature réalisé**
+
+- [ ] oui 
+- [x] non pas encore
 
 ---
 
@@ -498,6 +532,11 @@ extension/
 - Communication app ↔ extension
 - Permissions navigateurs
 
+**Feature réalisé**
+
+- [ ] oui 
+- [x] non pas encore
+
 ---
 
 ### 📌 P2 - Mode "Plus Envie"
@@ -541,6 +580,11 @@ export const emptyItem = () => ({
    - Opacité réduite
    - Badge gris
 
+
+**Feature réalisé**
+
+- [ ] oui 
+- [x] non pas encore
 ---
 
 ## 🔮 Version 3.0.0 - Avancé
@@ -597,6 +641,11 @@ export const emptyItem = () => ({
 - Complexe
 - Les 2 appareils doivent être allumés
 
+**Feature réalisé**
+
+- [ ] oui 
+- [x] non pas encore
+
 ---
 
 ### 🔴 Notifications et Rappels
@@ -641,7 +690,10 @@ function checkUpcomingDates() {
   });
 }
 ```
+**Feature réalisé**
 
+- [ ] oui 
+- [x] non pas encore
 ---
 
 ### 🔴 Comparateur de Prix
@@ -660,6 +712,11 @@ Trouver le meilleur prix pour un article sur plusieurs sites
 - APIs souvent payantes ou limitées
 - Anti-scraping
 - Données pas toujours fiables
+
+**Feature réalisé**
+
+- [ ] oui 
+- [x] non pas encore
 
 ---
 
