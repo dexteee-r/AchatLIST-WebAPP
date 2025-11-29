@@ -3,6 +3,7 @@ import ItemForm from './components/ItemForm';
 import ItemList from './components/ItemList';
 import FilterBar from './components/FilterBar';
 import BudgetSummary from './components/BudgetSummary';
+import ExportMenu from './components/ExportMenu';
 import { savePurchasesToJSON } from './utils/storages';
 import { emptyItem, STORAGE_KEY } from './utils/constants';
 import { pmeta, validUrl, exportCSV, importJSON } from './utils/helpers';
@@ -117,9 +118,12 @@ export default function App() {
         <div className="header-inner container">
           <div className="title">🛒 Liste d'achats – MVP</div>
           <div className="toolbar">
-            <button className="btn ghost" onClick={() => exportCSV(items)}>Exporter CSV</button>
+            <ExportMenu
+              onExportCSV={() => exportCSV(items)}
+              onExportJSON={() => savePurchasesToJSON(items)}
+            />
             <label className="btn ghost" style={{ cursor: 'pointer' }}>
-              Import JSON
+              📤 Import JSON
               <input type="file" accept="application/json" onChange={(e) => importJSON(e, setItems)} style={{ display: 'none' }} />
             </label>
           </div>
@@ -134,10 +138,6 @@ export default function App() {
           editingId={editingId}
           onCancel={handleCancel}
         />
-
-        <button type="button" className="btn" onClick={() => savePurchasesToJSON(items)}>
-          Sauvegarder la liste (load a JSON)
-        </button>
 
         <BudgetSummary totalBudget={totalBudget} totalRestant={totalRestant} />
 
