@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import { PRIORITIES } from './constants';
 
 export const pmeta = (id) => PRIORITIES.find(p => p.id === id) || PRIORITIES[1];
@@ -40,6 +41,7 @@ export function exportCSV(items) {
   a.download = `liste_achats_${new Date().toISOString().slice(0, 10)}.csv`;
   a.click();
   URL.revokeObjectURL(url);
+  toast.success('Export CSV réussi !');
 }
 
 export function importJSON(ev, setItems) {
@@ -65,8 +67,9 @@ export function importJSON(ev, setItems) {
         imageUrl: i.imageUrl || ''
       }));
       setItems(n);
+      toast.success(`${n.length} article(s) importé(s) !`);
     } catch (e) {
-      alert('Import échoué: ' + e.message);
+      toast.error('Import échoué: ' + e.message);
     } finally {
       ev.target.value = '';
     }

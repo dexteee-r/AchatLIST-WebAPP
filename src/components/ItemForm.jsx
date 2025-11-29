@@ -1,4 +1,5 @@
-import React from 'react';
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 const PRIORITIES = [
   { id: 'high', label: 'Haute', weight: 3, cls: 'badge red' },
@@ -18,6 +19,7 @@ async function fetchProductImage(url) {
 }
 
 export default function ItemForm({ draft, setDraft, onSubmit, editingId, onCancel }) {
+  const [loadingImage, setLoadingImage] = useState(false);
   const addAttr = () => setDraft(d => ({ ...d, attributes: [...(d.attributes || []), { key: '', value: '' }] }));
 
   const updAttr = (idx, field, val) => setDraft(d => {
@@ -30,16 +32,31 @@ export default function ItemForm({ draft, setDraft, onSubmit, editingId, onCance
 
   const onUrlBlur = async () => {
     if (draft.url && !draft.imageUrl) {
+      setLoadingImage(true);
       const img = await fetchProductImage(draft.url);
-      if (img) setDraft(d => ({ ...d, imageUrl: img }));
+      if (img) {
+        setDraft(d => ({ ...d, imageUrl: img }));
+        toast.success('Image récupérée !');
+      }
+      setLoadingImage(false);
     }
   };
 
   const handleFetchImage = async () => {
-    if (!draft.url) return alert("Ajoute d'abord un lien produit.");
+    if (!draft.url) {
+      toast.warning("Ajoute d'abord un lien produit.");
+      return;
+    }
+    setLoadingImage(true);
     const img = await fetchProductImage(draft.url);
-    if (img) setDraft(d => ({ ...d, imageUrl: img }));
-    else alert("Aucune image trouvée pour ce lien.");
+    setLoadingImage(false);
+
+    if (img) {
+      setDraft(d => ({ ...d, imageUrl: img }));
+      toast.success('Image récupérée !');
+    } else {
+      toast.error("Aucune image trouvée pour ce lien.");
+    }
   };
 
   return (
@@ -71,8 +88,9 @@ export default function ItemForm({ draft, setDraft, onSubmit, editingId, onCance
                 className="btn"
                 style={{ whiteSpace: 'nowrap' }}
                 onClick={handleFetchImage}
+                disabled={loadingImage}
               >
-                🔍
+                {loadingImage ? '⏳' : '🔍'}
               </button>
             </div>
             <div className="small" style={{ marginTop: 6 }}>

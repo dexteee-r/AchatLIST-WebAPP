@@ -1,6 +1,5 @@
 // src/utils/storage.js
-
-
+import { toast } from 'react-toastify';
 
 // Fonction pour sauvegarder les achats au format JSON
 export function savePurchasesToJSON(items) {
@@ -14,6 +13,7 @@ export function savePurchasesToJSON(items) {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+  toast.success('Export JSON réussi !');
 }
 
 

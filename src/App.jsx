@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import ItemForm from './components/ItemForm';
 import ItemList from './components/ItemList';
 import FilterBar from './components/FilterBar';
@@ -79,13 +81,21 @@ export default function App() {
   // Actions formulaire
   function upsert(e) {
     e.preventDefault();
-    if (!draft.title.trim()) return alert('Le titre est requis.');
-    if (!validUrl(draft.url)) return alert('Lien invalide.');
+    if (!draft.title.trim()) {
+      toast.error('Le titre est requis.');
+      return;
+    }
+    if (!validUrl(draft.url)) {
+      toast.error('Lien invalide.');
+      return;
+    }
 
     setItems(prev => {
       if (editingId) return prev.map(it => it.id === editingId ? { ...it, ...draft } : it);
       return [{ ...draft }, ...prev];
     });
+
+    toast.success(editingId ? 'Article modifié !' : 'Article ajouté !');
     setDraft(emptyItem());
     setEditingId(null);
   }
@@ -103,6 +113,7 @@ export default function App() {
       setEditingId(null);
       setDraft(emptyItem());
     }
+    toast.info('Article supprimé');
   }
 
   const toggle = (id) => setItems(prev => prev.map(i => i.id === id ? { ...i, purchased: !i.purchased } : i));
@@ -114,6 +125,19 @@ export default function App() {
 
   return (
     <div>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+
       <header className="header">
         <div className="header-inner container">
           <div className="title">🛒 Liste d'achats – MVP</div>
