@@ -177,6 +177,62 @@ Essayer plusieurs APIs si Microlink échoue :
 
 ---
 
+## 💰 Version 1.4.0 - Différenciateurs concurrentiels (SaaS)
+
+> Ces features sont absentes des concurrents directs (Moonsift, Sortd, WishDeck).
+> Voir `competitive_analysis.md` pour le contexte.
+
+### ⚡ P1 - Mode "Budget du mois"
+**Difficulté :** 🟢 Facile
+**Temps estimé :** 2-3 heures
+
+**Objectif :**
+Définir un plafond budgétaire mensuel et visualiser ce qu'on peut s'offrir maintenant.
+
+**Solution :**
+1. Ajouter un champ "Budget disponible ce mois" en haut de l'app (persisté en localStorage)
+2. Calculer : budget disponible - articles prioritaires non achetés
+3. Afficher visuellement : vert (ok), orange (serré), rouge (dépassé)
+4. Optionnel : suggestion des articles qu'on peut acheter dans l'enveloppe restante
+
+**Valeur ajoutée :** Aucun concurrent ne combine wishlist + budget personnel de cette façon.
+
+**Feature réalisée**
+- [ ] oui
+- [x] non pas encore
+
+---
+
+### ⚡ P1 - Alertes prix (suivi de prix)
+**Difficulté :** 🔴 Difficile
+**Temps estimé :** 3-5 jours
+
+**Objectif :**
+Surveiller le prix d'un article et notifier l'utilisateur quand il baisse.
+
+**Contrainte :**
+Nécessite un **backend** (scraping périodique côté serveur) — pas faisable en pur frontend.
+
+**Architecture :**
+1. Backend (Node.js / Bun) : cron job toutes les X heures qui scrape le prix des articles avec URL
+2. Comparer au prix sauvegardé dans la DB
+3. Si baisse détectée → notification push (PWA) ou email
+4. Frontend : badge "prix en baisse" sur l'article + historique des prix
+
+**Stack suggérée :**
+- Backend : Bun + Hono (léger)
+- DB : Supabase (PostgreSQL)
+- Scraping : Playwright headless ou Microlink Pro
+- Notifications : Web Push API
+
+**Valeur ajoutée :** Feature premium payante — les gens payent pour ça (ex: Honey, Keepa).
+
+**Feature réalisée**
+- [ ] oui
+- [x] non pas encore
+
+---
+
 ## 🎨 Version 1.3.0 - Fonctionnalités Avancées
 
 ### 📌 P2 - Système de Tags Multiples
