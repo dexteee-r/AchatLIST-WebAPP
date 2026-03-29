@@ -44,6 +44,20 @@ export function exportCSV(items) {
   toast.success('Export CSV réussi !');
 }
 
+export function savePurchasesToJSON(items) {
+  const date = new Date().toISOString().slice(0, 10);
+  const blob = new Blob([JSON.stringify(items, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `liste_achats_${date}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast.success('Export JSON réussi !');
+}
+
 export function importJSON(ev, setItems) {
   const f = ev.target.files?.[0];
   if (!f) return;

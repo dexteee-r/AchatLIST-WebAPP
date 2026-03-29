@@ -1,22 +1,7 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-
-const PRIORITIES = [
-  { id: 'high', label: 'Haute', weight: 3, cls: 'badge red' },
-  { id: 'medium', label: 'Moyenne', weight: 2, cls: 'badge amber' },
-  { id: 'low', label: 'Basse', weight: 1, cls: 'badge green' },
-];
-
-async function fetchProductImage(url) {
-  if (!url) return '';
-  try {
-    const res = await fetch(`https://api.microlink.io?url=${encodeURIComponent(url)}`);
-    const data = await res.json();
-    return data?.data?.image?.url || '';
-  } catch {
-    return '';
-  }
-}
+import { PRIORITIES } from '../utils/constants';
+import { fetchProductImage } from '../utils/helpers';
 
 export default function ItemForm({ draft, setDraft, onSubmit, editingId, onCancel }) {
   const [loadingImage, setLoadingImage] = useState(false);

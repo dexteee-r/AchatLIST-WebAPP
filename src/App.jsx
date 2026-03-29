@@ -6,9 +6,8 @@ import ItemList from './components/ItemList';
 import FilterBar from './components/FilterBar';
 import BudgetSummary from './components/BudgetSummary';
 import ExportMenu from './components/ExportMenu';
-import { savePurchasesToJSON } from './utils/storages';
 import { emptyItem, STORAGE_KEY } from './utils/constants';
-import { pmeta, validUrl, exportCSV, importJSON } from './utils/helpers';
+import { pmeta, validUrl, exportCSV, savePurchasesToJSON, importJSON } from './utils/helpers';
 
 export default function App() {
   const [items, setItems] = useState(() => {
@@ -61,7 +60,7 @@ export default function App() {
         case 'price': return ((parseFloat(a.price) || 0) - (parseFloat(b.price) || 0)) * dir;
         case 'date': return ((a.targetDate ? +new Date(a.targetDate) : 0) - (b.targetDate ? +new Date(b.targetDate) : 0)) * dir;
         case 'createdAt': return ((a.createdAt || 0) - (b.createdAt || 0)) * dir;
-        case 'title': return a.title.localeCompare(b.title) * (sort.dir === 'asc' ? 1 : -1);
+        case 'title': return a.title.localeCompare(b.title) * dir;
         default: return 0;
       }
     });

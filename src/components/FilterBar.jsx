@@ -1,10 +1,4 @@
-import React from 'react';
-
-const PRIORITIES = [
-  { id: 'high', label: 'Haute', weight: 3, cls: 'badge red' },
-  { id: 'medium', label: 'Moyenne', weight: 2, cls: 'badge amber' },
-  { id: 'low', label: 'Basse', weight: 1, cls: 'badge green' },
-];
+import { PRIORITIES } from '../utils/constants';
 
 export default function FilterBar({ filters, setFilters, sort, setSort, categories }) {
   return (

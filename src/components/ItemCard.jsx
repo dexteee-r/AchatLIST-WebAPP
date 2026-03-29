@@ -1,14 +1,8 @@
-import React from 'react';
-
-const PRIORITIES = [
-  { id: 'high', label: 'Haute', weight: 3, cls: 'badge red' },
-  { id: 'medium', label: 'Moyenne', weight: 2, cls: 'badge amber' },
-  { id: 'low', label: 'Basse', weight: 1, cls: 'badge green' },
-];
-
-const pmeta = (id) => PRIORITIES.find(p => p.id === id) || PRIORITIES[1];
+import { pmeta } from '../utils/helpers';
 
 export default function ItemCard({ item, onToggle, onEdit, onDelete }) {
+  const priority_meta = pmeta(item.priority);
+
   return (
     <li className={`card ${item.purchased ? 'opacity-70' : ''}`}>
       {/* Image produit (si trouvée) */}
@@ -32,7 +26,7 @@ export default function ItemCard({ item, onToggle, onEdit, onDelete }) {
       {/* Contenu texte */}
       <div style={{ minWidth: 0, flex: 1 }}>
         <div className="chips">
-          <span className={pmeta(item.priority).cls}>{pmeta(item.priority).label}</span>
+          <span className={priority_meta.cls}>{priority_meta.label}</span>
           {item.category && <span className="badge">{item.category}</span>}
           {item.price && <span className="badge">{Number.parseFloat(item.price).toFixed(2)} €</span>}
           {item.targetDate && (
