@@ -1,10 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { PRIORITIES } from '../utils/constants';
 import { fetchProductImage } from '../utils/helpers';
 
 export default function ItemForm({ draft, setDraft, onSubmit, editingId, onCancel }) {
   const [loadingImage, setLoadingImage] = useState(false);
+  const [tag_input, setTagInput] = useState('');
+
+  useEffect(() => { setTagInput(''); }, [editingId]);
+
+  const add_tag = () => {
+    const val = tag_input.trim();
+    if (!val || (draft.tags || []).includes(val)) return;
+    setDraft(d => ({ ...d, tags: [...(d.tags || []), val] }));
+    setTagInput('');
+  };
+
+  const remove_tag = (tag) => setDraft(d => ({ ...d, tags: d.tags.filter(t => t !== tag) }));
+
   const addAttr = () => setDraft(d => ({ ...d, attributes: [...(d.attributes || []), { key: '', value: '' }] }));
 
   const updAttr = (idx, field, val) => setDraft(d => {
@@ -107,13 +120,32 @@ export default function ItemForm({ draft, setDraft, onSubmit, editingId, onCance
             </select>
           </div>
           <div style={{ gridColumn: 'span 3' }} className="field">
-            <div className="label">Catégorie</div>
-            <input
-              className="input"
-              placeholder="Ex: PC, Maison…"
-              value={draft.category}
-              onChange={e => setDraft({ ...draft, category: e.target.value })}
-            />
+            <div className="label">Tags</div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <input
+                className="input"
+                placeholder="Ex: PC, Maison…"
+                style={{ flex: 1 }}
+                value={tag_input}
+                onChange={e => setTagInput(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); add_tag(); } }}
+              />
+              <button type="button" className="btn" onClick={add_tag}>+</button>
+            </div>
+            {(draft.tags || []).length > 0 && (
+              <div className="chips" style={{ marginTop: 6 }}>
+                {(draft.tags || []).map(tag => (
+                  <span
+                    key={tag}
+                    className="badge"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => remove_tag(tag)}
+                  >
+                    {tag} ×
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
           <div style={{ gridColumn: 'span 4' }} className="field">
             <div className="label">Date cible</div>

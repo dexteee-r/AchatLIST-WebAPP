@@ -27,7 +27,7 @@ export default function ItemCard({ item, onToggle, onEdit, onDelete }) {
       <div style={{ minWidth: 0, flex: 1 }}>
         <div className="chips">
           <span className={priority_meta.cls}>{priority_meta.label}</span>
-          {item.category && <span className="badge">{item.category}</span>}
+          {(item.tags || []).map(tag => <span key={tag} className="badge">{tag}</span>)}
           {item.price && <span className="badge">{Number.parseFloat(item.price).toFixed(2)} €</span>}
           {item.targetDate && (
             <span className="badge">

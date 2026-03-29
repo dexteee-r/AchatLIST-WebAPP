@@ -13,14 +13,19 @@ export default function App() {
   const [items, setItems] = useState(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
+      const parsed = raw ? JSON.parse(raw) : [];
+      // migration: ancienne data avec category string → tags array
+      return parsed.map(item => ({
+        ...item,
+        tags: item.tags ?? (item.category ? [item.category] : []),
+      }));
     } catch {
       return [];
     }
   });
   const [draft, setDraft] = useState(emptyItem);
   const [editingId, setEditingId] = useState(null);
-  const [filters, setFilters] = useState({ q: '', priority: 'all', showPurchased: 'all', category: 'all' });
+  const [filters, setFilters] = useState({ q: '', priority: 'all', showPurchased: 'all', tag: 'all' });
   const [sort, setSort] = useState({ by: 'priority', dir: 'desc' });
 
   // Persistance
@@ -28,10 +33,10 @@ export default function App() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items]);
 
-  // Catégories distinctes
+  // Tags distincts (toutes les valeurs uniques de tous les items)
   const categories = useMemo(() => {
     const s = new Set();
-    items.forEach(i => i.category && s.add(i.category));
+    items.forEach(i => (i.tags || []).forEach(t => s.add(t)));
     return ['all', ...Array.from(s)];
   }, [items]);
 
@@ -41,7 +46,7 @@ export default function App() {
     const q = filters.q.trim().toLowerCase();
     if (q) {
       out = out.filter(i =>
-        [i.title, i.category, i.notes, i.url, ...(i.attributes || []).map(a => `${a.key}:${a.value}`)]
+        [i.title, ...(i.tags || []), i.notes, i.url, ...(i.attributes || []).map(a => `${a.key}:${a.value}`)]
           .filter(Boolean)
           .some(t => t.toLowerCase().includes(q))
       );
@@ -51,7 +56,7 @@ export default function App() {
       const should = filters.showPurchased === 'purchased';
       out = out.filter(i => i.purchased === should);
     }
-    if (filters.category !== 'all') out = out.filter(i => i.category === filters.category);
+    if (filters.tag !== 'all') out = out.filter(i => (i.tags || []).includes(filters.tag));
 
     out.sort((a, b) => {
       const dir = sort.dir === 'asc' ? 1 : -1;

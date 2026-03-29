@@ -12,7 +12,7 @@ export const emptyItem = () => ({
   url: '',
   price: '',
   priority: 'high',
-  category: '',
+  tags: [],
   targetDate: '',
   notes: '',
   attributes: [],

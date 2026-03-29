@@ -41,15 +41,15 @@ export default function FilterBar({ filters, setFilters, sort, setSort, categori
           </select>
         </div>
         <div className="field">
-          <div className="label">Catégorie</div>
+          <div className="label">Tag</div>
           <select
             className="select"
-            value={filters.category}
-            onChange={e => setFilters({ ...filters, category: e.target.value })}
+            value={filters.tag}
+            onChange={e => setFilters({ ...filters, tag: e.target.value })}
           >
             {categories.map(c => (
               <option key={c} value={c}>
-                {c === 'all' ? 'Toutes' : c}
+                {c === 'all' ? 'Tous' : c}
               </option>
             ))}
           </select>
