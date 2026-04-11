@@ -17,6 +17,7 @@ export const emptyItem = () => ({
   notes: '',
   attributes: [],
   purchased: false,
+  dismissed: false,
   createdAt: Date.now(),
   imageUrl: '',
 });

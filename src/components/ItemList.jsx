@@ -1,6 +1,6 @@
 import ItemCard from './ItemCard';
 
-export default function ItemList({ items, onToggle, onEdit, onDelete }) {
+export default function ItemList({ items, onToggle, onEdit, onDelete, onDismiss }) {
   if (items.length === 0) {
     return (
       <section style={{ marginTop: 16 }}>
@@ -21,6 +21,7 @@ export default function ItemList({ items, onToggle, onEdit, onDelete }) {
             onToggle={onToggle}
             onEdit={onEdit}
             onDelete={onDelete}
+            onDismiss={onDismiss}
           />
         ))}
       </ul>

@@ -1,10 +1,10 @@
 import { pmeta } from '../utils/helpers';
 
-export default function ItemCard({ item, onToggle, onEdit, onDelete }) {
+export default function ItemCard({ item, onToggle, onEdit, onDelete, onDismiss }) {
   const priority_meta = pmeta(item.priority);
 
   return (
-    <li className={`card ${item.purchased ? 'opacity-70' : ''}`}>
+    <li className={`card ${item.purchased ? 'opacity-70' : ''} ${item.dismissed ? 'opacity-50' : ''}`}>
       {/* Image produit (si trouvée) */}
       {item.imageUrl && (
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -35,6 +35,7 @@ export default function ItemCard({ item, onToggle, onEdit, onDelete }) {
             </span>
           )}
           {item.purchased && <span className="badge green">Acheté</span>}
+          {item.dismissed && <span className="badge" style={{ background: '#f3f4f6', color: '#6b7280' }}>Plus envie</span>}
         </div>
         <h3 style={{ marginTop: 8, marginBottom: 4 }}>
           {item.url ? (
@@ -65,6 +66,16 @@ export default function ItemCard({ item, onToggle, onEdit, onDelete }) {
       <div className="actions">
         <button className="btn" onClick={() => onToggle(item.id)}>
           {item.purchased ? 'Restaurer' : 'Marquer acheté'}
+        </button>
+        <button
+          className="btn"
+          style={item.dismissed
+            ? { borderColor: '#bbf7d0', color: '#15803d', background: '#f0fdf4' }
+            : { borderColor: '#e5e7eb', color: '#6b7280', background: '#f9fafb' }
+          }
+          onClick={() => onDismiss(item.id)}
+        >
+          {item.dismissed ? 'Remettre' : 'Plus envie'}
         </button>
         <div style={{ display: 'flex', gap: 8 }}>
           {item.url && (
