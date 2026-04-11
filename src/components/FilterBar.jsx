@@ -1,8 +1,22 @@
 import { PRIORITIES } from '../utils/constants';
 
-export default function FilterBar({ filters, setFilters, sort, setSort, categories }) {
+export default function FilterBar({ filters, setFilters, sort, setSort, categories, filteredCount, totalCount, onReset }) {
+  const has_active_filters = filters.q || filters.priority !== 'all' || filters.showPurchased !== 'all'
+    || filters.tag !== 'all' || filters.priceMin !== '' || filters.priceMax !== ''
+    || sort.by !== 'priority' || sort.dir !== 'desc';
+
   return (
-    <section className="panel" style={{ marginTop: 16 }}>
+    <section id="tour-filters" className="panel" style={{ marginTop: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+        <span className="small" style={{ color: 'var(--muted)' }}>
+          {filteredCount} / {totalCount} article{totalCount > 1 ? 's' : ''}
+        </span>
+        {has_active_filters && (
+          <button className="btn ghost" onClick={onReset} style={{ fontSize: 13, padding: '4px 10px' }}>
+            Réinitialiser les filtres
+          </button>
+        )}
+      </div>
       <div className="toolbar-row">
         <div className="field" style={{ flex: 1 }}>
           <div className="label">Recherche</div>
@@ -38,6 +52,7 @@ export default function FilterBar({ filters, setFilters, sort, setSort, categori
             <option value="all">Tous</option>
             <option value="unpurchased">À acheter</option>
             <option value="purchased">Achetés</option>
+            <option value="dismissed">Plus envie</option>
           </select>
         </div>
         <div className="field">
@@ -53,6 +68,31 @@ export default function FilterBar({ filters, setFilters, sort, setSort, categori
               </option>
             ))}
           </select>
+        </div>
+        <div className="field">
+          <div className="label">Prix min / max</div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input
+              className="input"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="Min €"
+              value={filters.priceMin}
+              onChange={e => setFilters({ ...filters, priceMin: e.target.value })}
+              style={{ width: 80 }}
+            />
+            <input
+              className="input"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="Max €"
+              value={filters.priceMax}
+              onChange={e => setFilters({ ...filters, priceMax: e.target.value })}
+              style={{ width: 80 }}
+            />
+          </div>
         </div>
         <div className="field">
           <div className="label">Trier par</div>

@@ -6,10 +6,19 @@ import ItemList from './components/ItemList';
 import FilterBar from './components/FilterBar';
 import BudgetSummary from './components/BudgetSummary';
 import ExportMenu from './components/ExportMenu';
+import OnboardingTour, { TOUR_KEY } from './components/OnboardingTour';
 import { emptyItem, STORAGE_KEY } from './utils/constants';
 import { pmeta, validUrl, exportCSV, savePurchasesToJSON, importJSON } from './utils/helpers';
 
 export default function App() {
+  const [tourRun, setTourRun] = useState(() => !localStorage.getItem(TOUR_KEY));
+  const [tourKey, setTourKey] = useState(0);
+
+  function restartTour() {
+    setTourKey(k => k + 1);
+    setTourRun(true);
+  }
+
   const [items, setItems] = useState(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -25,8 +34,10 @@ export default function App() {
   });
   const [draft, setDraft] = useState(emptyItem);
   const [editingId, setEditingId] = useState(null);
-  const [filters, setFilters] = useState({ q: '', priority: 'all', showPurchased: 'all', tag: 'all' });
-  const [sort, setSort] = useState({ by: 'priority', dir: 'desc' });
+  const default_filters = { q: '', priority: 'all', showPurchased: 'all', tag: 'all', priceMin: '', priceMax: '' };
+  const default_sort = { by: 'priority', dir: 'desc' };
+  const [filters, setFilters] = useState(default_filters);
+  const [sort, setSort] = useState(default_sort);
 
   // Persistance
   useEffect(() => {
@@ -52,11 +63,22 @@ export default function App() {
       );
     }
     if (filters.priority !== 'all') out = out.filter(i => i.priority === filters.priority);
-    if (filters.showPurchased !== 'all') {
-      const should = filters.showPurchased === 'purchased';
-      out = out.filter(i => i.purchased === should);
+    if (filters.showPurchased === 'purchased') {
+      out = out.filter(i => i.purchased);
+    } else if (filters.showPurchased === 'unpurchased') {
+      out = out.filter(i => !i.purchased && !i.dismissed);
+    } else if (filters.showPurchased === 'dismissed') {
+      out = out.filter(i => i.dismissed);
     }
     if (filters.tag !== 'all') out = out.filter(i => (i.tags || []).includes(filters.tag));
+    if (filters.priceMin !== '') {
+      const min = parseFloat(filters.priceMin);
+      if (!isNaN(min)) out = out.filter(i => (parseFloat(i.price) || 0) >= min);
+    }
+    if (filters.priceMax !== '') {
+      const max = parseFloat(filters.priceMax);
+      if (!isNaN(max)) out = out.filter(i => (parseFloat(i.price) || 0) <= max);
+    }
 
     out.sort((a, b) => {
       const dir = sort.dir === 'asc' ? 1 : -1;
@@ -78,7 +100,7 @@ export default function App() {
     [items]
   );
   const totalRestant = useMemo(
-    () => items.filter(i => !i.purchased).reduce((sum, i) => sum + (parseFloat(i.price) || 0), 0),
+    () => items.filter(i => !i.purchased && !i.dismissed).reduce((sum, i) => sum + (parseFloat(i.price) || 0), 0),
     [items]
   );
 
@@ -121,6 +143,7 @@ export default function App() {
   }
 
   const toggle = (id) => setItems(prev => prev.map(i => i.id === id ? { ...i, purchased: !i.purchased } : i));
+  const dismiss = (id) => setItems(prev => prev.map(i => i.id === id ? { ...i, dismissed: !i.dismissed } : i));
 
   const handleCancel = () => {
     setDraft(emptyItem());
@@ -129,6 +152,7 @@ export default function App() {
 
   return (
     <div>
+      <OnboardingTour key={tourKey} run={tourRun} onFinish={() => setTourRun(false)} />
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -154,6 +178,15 @@ export default function App() {
               📤 Import JSON
               <input type="file" accept="application/json" onChange={(e) => importJSON(e, setItems)} style={{ display: 'none' }} />
             </label>
+            <button
+              className="btn ghost"
+              onClick={restartTour}
+              title="Lancer le tutoriel"
+              aria-label="Aide — lancer le tutoriel"
+              style={{ fontWeight: 600 }}
+            >
+              ?
+            </button>
           </div>
         </div>
       </header>
@@ -167,7 +200,7 @@ export default function App() {
           onCancel={handleCancel}
         />
 
-        <BudgetSummary totalBudget={totalBudget} totalRestant={totalRestant} />
+        <BudgetSummary totalBudget={totalBudget} totalRestant={totalRestant} filteredItems={filteredItems} />
 
         <FilterBar
           filters={filters}
@@ -175,6 +208,9 @@ export default function App() {
           sort={sort}
           setSort={setSort}
           categories={categories}
+          filteredCount={filteredItems.length}
+          totalCount={items.length}
+          onReset={() => { setFilters(default_filters); setSort(default_sort); }}
         />
 
         <ItemList
@@ -182,6 +218,7 @@ export default function App() {
           onToggle={toggle}
           onEdit={edit}
           onDelete={del}
+          onDismiss={dismiss}
         />
 
         <div className="footer">LocalStorage • Aucune donnée n'est envoyée en ligne • v1.0</div>

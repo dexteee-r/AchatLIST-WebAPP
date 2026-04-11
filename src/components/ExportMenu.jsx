@@ -28,7 +28,7 @@ export default function ExportMenu({ onExportCSV, onExportJSON }) {
   };
 
   return (
-    <div style={{ position: 'relative' }} ref={menuRef}>
+    <div id="tour-export" style={{ position: 'relative' }} ref={menuRef}>
       <button
         className="btn ghost"
         onClick={() => setIsOpen(!isOpen)}
