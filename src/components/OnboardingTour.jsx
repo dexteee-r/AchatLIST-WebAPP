@@ -1,4 +1,6 @@
-import Joyride, { STATUS } from 'react-joyride';
+import * as JoyrideModule from 'react-joyride';
+const Joyride = JoyrideModule.default || JoyrideModule;
+const { STATUS } = JoyrideModule;
 
 const TOUR_KEY = 'tour_done';
 

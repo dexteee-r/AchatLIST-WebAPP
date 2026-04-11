@@ -8,6 +8,9 @@ export default defineConfig({
     globals: true,
     setupFiles: './src/test_setup.js',
   },
+  optimizeDeps: {
+    include: ['react-joyride'],
+  },
   plugins: [
     react(),
     VitePWA({
