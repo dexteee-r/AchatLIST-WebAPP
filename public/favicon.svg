@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Background: --brand (#0f172a) with rounded corners -->
+  <rect width="32" height="32" rx="7" fill="#0f172a"/>
+
+  <!-- Row 1 — checked (green checkmark) -->
+  <polyline points="5.5,10 8,12.5 12,7.5" stroke="#22c55e" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="15.5" y1="10" x2="26.5" y2="10" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+
+  <!-- Row 2 — checked (green checkmark) -->
+  <polyline points="5.5,17 8,19.5 12,14.5" stroke="#22c55e" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="15.5" y1="17" x2="26.5" y2="17" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+
+  <!-- Row 3 — pending (empty checkbox + dimmed line) -->
+  <rect x="5" y="21" width="6" height="6" rx="1.5" stroke="rgba(255,255,255,0.38)" stroke-width="1.6" fill="none"/>
+  <line x1="15.5" y1="24" x2="26.5" y2="24" stroke="rgba(255,255,255,0.38)" stroke-width="2.2" stroke-linecap="round"/>
+</svg>
