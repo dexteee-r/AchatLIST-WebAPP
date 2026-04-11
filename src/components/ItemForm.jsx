@@ -1,22 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { PRIORITIES } from '../utils/constants';
-import { fetchProductImage } from '../utils/helpers';
+import { scrapeProductInfo } from '../utils/scraper';
+import TagInput from './TagInput';
 
 export default function ItemForm({ draft, setDraft, onSubmit, editingId, onCancel }) {
-  const [loadingImage, setLoadingImage] = useState(false);
-  const [tag_input, setTagInput] = useState('');
-
-  useEffect(() => { setTagInput(''); }, [editingId]);
-
-  const add_tag = () => {
-    const val = tag_input.trim();
-    if (!val || (draft.tags || []).includes(val)) return;
-    setDraft(d => ({ ...d, tags: [...(d.tags || []), val] }));
-    setTagInput('');
-  };
-
-  const remove_tag = (tag) => setDraft(d => ({ ...d, tags: d.tags.filter(t => t !== tag) }));
+  const [isScraping, setIsScraping] = useState(false);
 
   const addAttr = () => setDraft(d => ({ ...d, attributes: [...(d.attributes || []), { key: '', value: '' }] }));
 
@@ -28,37 +17,84 @@ export default function ItemForm({ draft, setDraft, onSubmit, editingId, onCance
 
   const rmAttr = (idx) => setDraft(d => ({ ...d, attributes: d.attributes.filter((_, i) => i !== idx) }));
 
+  // On URL blur: auto-fill only empty fields (non-destructive)
   const onUrlBlur = async () => {
-    if (draft.url && !draft.imageUrl) {
-      setLoadingImage(true);
-      const img = await fetchProductImage(draft.url);
-      if (img) {
-        setDraft(d => ({ ...d, imageUrl: img }));
-        toast.success('Image récupérée !');
-      }
-      setLoadingImage(false);
+    if (!draft.url) return;
+    // Skip if all auto-fillable fields are already set
+    if (draft.title && draft.imageUrl && draft.notes) return;
+
+    setIsScraping(true);
+    const info = await scrapeProductInfo(draft.url);
+    setIsScraping(false);
+
+    if (!info.title && !info.imageUrl && !info.description) return;
+
+    // Snapshot current draft values to determine what actually gets filled
+    const filled = [
+      !draft.title && info.title && 'titre',
+      !draft.imageUrl && info.imageUrl && 'image',
+      !draft.notes && info.description && 'description',
+      !draft.price && info.price && 'prix',
+    ].filter(Boolean);
+
+    setDraft(d => ({
+      ...d,
+      title: d.title || info.title,
+      imageUrl: d.imageUrl || info.imageUrl,
+      notes: d.notes || info.description,
+      price: d.price || info.price,
+    }));
+
+    if (filled.length > 0) {
+      toast.success(`Auto-rempli : ${filled.join(', ')}`);
     }
   };
 
+  // 🔍 button: force re-fetch, overwrite all fields with non-empty results
   const handleFetchImage = async () => {
     if (!draft.url) {
       toast.warning("Ajoute d'abord un lien produit.");
       return;
     }
-    setLoadingImage(true);
-    const img = await fetchProductImage(draft.url);
-    setLoadingImage(false);
 
-    if (img) {
-      setDraft(d => ({ ...d, imageUrl: img }));
-      toast.success('Image récupérée !');
-    } else {
-      toast.error("Aucune image trouvée pour ce lien.");
+    // Warn before overwriting existing content
+    const existing = [
+      draft.title && 'titre',
+      draft.notes && 'notes',
+      draft.price && 'prix',
+    ].filter(Boolean);
+    if (existing.length > 0 && !window.confirm(
+      `Le re-fetch va écraser : ${existing.join(', ')}. Continuer ?`
+    )) return;
+
+    setIsScraping(true);
+    const info = await scrapeProductInfo(draft.url, { force: true });
+    setIsScraping(false);
+
+    if (!info.title && !info.imageUrl && !info.description && !info.price) {
+      toast.error("Aucune information trouvée pour ce lien.");
+      return;
     }
+
+    setDraft(d => ({
+      ...d,
+      ...(info.title && { title: info.title }),
+      ...(info.imageUrl && { imageUrl: info.imageUrl }),
+      ...(info.description && { notes: info.description }),
+      ...(info.price && { price: info.price }),
+    }));
+
+    const updated = [
+      info.title && 'titre',
+      info.imageUrl && 'image',
+      info.description && 'description',
+      info.price && 'prix',
+    ].filter(Boolean);
+    toast.success(`Récupéré : ${updated.join(', ')}`);
   };
 
   return (
-    <section className="panel">
+    <section id="tour-form" className="panel">
       <form onSubmit={onSubmit} className="grid">
         <div className="grid-12">
           <div style={{ gridColumn: 'span 5' }} className="field">
@@ -74,6 +110,7 @@ export default function ItemForm({ draft, setDraft, onSubmit, editingId, onCance
             <div className="label">Lien (URL)</div>
             <div style={{ display: 'flex', gap: '8px' }}>
               <input
+                id="tour-url"
                 className="input"
                 placeholder="https://…"
                 style={{ flex: 1 }}
@@ -86,9 +123,9 @@ export default function ItemForm({ draft, setDraft, onSubmit, editingId, onCance
                 className="btn"
                 style={{ whiteSpace: 'nowrap' }}
                 onClick={handleFetchImage}
-                disabled={loadingImage}
+                disabled={isScraping}
               >
-                {loadingImage ? '⏳' : '🔍'}
+                {isScraping ? '⏳' : '🔍'}
               </button>
             </div>
             <div className="small" style={{ marginTop: 6 }}>
@@ -121,31 +158,10 @@ export default function ItemForm({ draft, setDraft, onSubmit, editingId, onCance
           </div>
           <div style={{ gridColumn: 'span 3' }} className="field">
             <div className="label">Tags</div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <input
-                className="input"
-                placeholder="Ex: PC, Maison…"
-                style={{ flex: 1 }}
-                value={tag_input}
-                onChange={e => setTagInput(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); add_tag(); } }}
-              />
-              <button type="button" className="btn" onClick={add_tag}>+</button>
-            </div>
-            {(draft.tags || []).length > 0 && (
-              <div className="chips" style={{ marginTop: 6 }}>
-                {(draft.tags || []).map(tag => (
-                  <span
-                    key={tag}
-                    className="badge"
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => remove_tag(tag)}
-                  >
-                    {tag} ×
-                  </span>
-                ))}
-              </div>
-            )}
+            <TagInput
+              tags={draft.tags || []}
+              onChange={tags => setDraft(d => ({ ...d, tags }))}
+            />
           </div>
           <div style={{ gridColumn: 'span 4' }} className="field">
             <div className="label">Date cible</div>
