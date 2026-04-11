@@ -1,5 +1,6 @@
 import { toast } from 'react-toastify';
 import { PRIORITIES } from './constants';
+import { getCachedImage, setCachedImage } from './imageCache';
 
 export const pmeta = (id) => PRIORITIES.find(p => p.id === id) || PRIORITIES[1];
 
@@ -15,13 +16,21 @@ export const validUrl = (u) => {
 
 export async function fetchProductImage(url) {
   if (!url) return '';
+
+  const cached = getCachedImage(url);
+  if (cached !== null) return cached;
+
+  let imageUrl = '';
   try {
     const res = await fetch(`https://api.microlink.io?url=${encodeURIComponent(url)}`);
     const data = await res.json();
-    return data?.data?.image?.url || '';
+    imageUrl = data?.data?.image?.url || '';
   } catch {
-    return '';
+    // Microlink unreachable — leave imageUrl empty, do not cache
   }
+
+  setCachedImage(url, imageUrl);
+  return imageUrl;
 }
 
 export function exportCSV(items) {
