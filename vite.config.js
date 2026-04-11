@@ -8,6 +8,9 @@ export default defineConfig({
     globals: true,
     setupFiles: './src/test_setup.js',
   },
+  server: {
+    port: 5177,
+  },
   optimizeDeps: {
     include: ['react-joyride'],
   },
