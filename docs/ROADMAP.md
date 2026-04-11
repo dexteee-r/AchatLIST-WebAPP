@@ -54,10 +54,10 @@ Cette roadmap détaille les fonctionnalités futures prévues pour l'application
 - `src/components/ItemForm.jsx` - Loading states pour fetch image
 - `src/utils/helpers.js` - Toast dans importJSON
 
-**Feature réalisé**
+**Feature réalisée**
 
-- [ ] oui 
-- [x] non pas encore
+- [x] oui *(react-toastify importé et intégré dans App.jsx — toasts sur ajout, édition, suppression, validation et erreurs. Spinners de chargement : à faire)*
+- [ ] non pas encore
 
 ---
 
@@ -309,10 +309,13 @@ export default function TagInput({ tags, onChange }) {
 
 5. **Afficher tags dans ItemCard**
 
-**Feature réalisé**
+**Feature réalisée** *(partiellement — modèle de données prêt, UI à compléter)*
 
-- [ ] oui 
-- [x] non pas encore
+- [x] Modèle de données `tags[]` ✅ *(migration automatique `category` → `tags[]` déjà dans App.jsx au chargement)*
+- [x] Filtrage par tag ✅ *(filtre `filters.tag` déjà opérationnel dans App.jsx)*
+- [ ] Composant `TagInput.jsx` — à créer
+- [ ] Intégration de `TagInput` dans `ItemForm`
+- [ ] Affichage des tags dans `ItemCard`
 
 ---
 
@@ -637,10 +640,11 @@ export const emptyItem = () => ({
    - Badge gris
 
 
-**Feature réalisé**
+**Feature réalisée** *(partiellement — variante `dismissed` déjà implémentée)*
 
-- [ ] oui 
-- [x] non pas encore
+- [x] Champ `dismissed` ✅ *(déjà dans App.jsx — toggle `dismiss()`, filtre `showPurchased === 'dismissed'` opérationnel)*
+- [ ] Champ `wantLevel` complet (`want` / `notSure` / `noWant`) — à implémenter si on veut 3 niveaux distincts
+- [ ] Bouton et badge dédiés dans `ItemCard` pour le statut "Plus envie" / "Indécis"
 ---
 
 ## 🔮 Version 3.0.0 - Avancé
